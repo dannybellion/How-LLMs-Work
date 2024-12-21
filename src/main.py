@@ -1,16 +1,19 @@
 import torch
 #from utils.simple_bigram import BigramLanguageModel
-from utils.bigram_self_att import BigramLanguageModel
-from utils.utils import BatchLoader, Evaluator
+from utils.models import BigramLanguageModel
+from utils.utils import BatchLoader, Evaluator, create_encoders
 
 # hyperparameters
 batch_size = 32 # how many independent sequences will we process in parallel
 block_size = 8 # what is the maximum context length for predictions
-max_iters = 4000 # number of training iterations
+max_iters = 2000 # number of training iterations
 eval_interval = 500 # how often to evaluate the model
-learning_rate = 1e-3 # learning rate
+learning_rate = 3e-4 # learning rate
 eval_iters = 200 # number of iterations to evaluate loss
 n_embed = 32 # embedding dimension
+n_heads = 4
+n_layer = 4
+dropout = 0.2
 
 
 with open("../data/input.txt", "r") as f:
@@ -19,13 +22,6 @@ with open("../data/input.txt", "r") as f:
 chars = sorted(list(set(text)))
 
 vocab_size = len(chars)
-
-def create_encoders(chars):
-    stoi = { ch:i for i,ch in enumerate(chars) }
-    itos = { i:ch for i,ch in enumerate(chars) }
-    encode = lambda s: [stoi[c] for c in s]
-    decode = lambda l: ''.join([itos[i] for i in l])
-    return encode, decode
 
 encode, decode = create_encoders(chars)
 
@@ -43,7 +39,7 @@ torch.manual_seed(1337)
 train_loader = BatchLoader(train_data, block_size=block_size, batch_size=batch_size)
 val_loader = BatchLoader(val_data, block_size=block_size, batch_size=batch_size)
 
-model = BigramLanguageModel(vocab_size, n_embed, block_size)
+model = BigramLanguageModel(vocab_size, n_embed, block_size, n_layer, n_heads, dropout)
 
 # Setup evaluator
 evaluator = Evaluator(model, train_loader, val_loader)
