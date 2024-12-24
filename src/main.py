@@ -1,14 +1,14 @@
 import torch
-from utils.models import BigramLanguageModel
+from utils.models import BigramLanguageModel, SimpleBigramLanguageModel
 from utils.utils import BatchLoader, Evaluator, create_encoders
-from training.trainer import Trainer
+from utils.trainer import Trainer
 
 # hyperparameters
 batch_size = 32
-block_size = 8
+block_size = 16
 max_iters = 2000
 eval_interval = 100
-learning_rate = 3e-4
+learning_rate = 3e-3
 eval_iters = 200
 n_embed = 32
 n_heads = 4
@@ -33,6 +33,7 @@ val_data = data[n:]
 torch.manual_seed(1337)
 train_loader = BatchLoader(train_data, block_size=block_size, batch_size=batch_size)
 val_loader = BatchLoader(val_data, block_size=block_size, batch_size=batch_size)
+# model = SimpleBigramLanguageModel(vocab_size, n_embed, block_size)
 model = BigramLanguageModel(vocab_size, n_embed, block_size, n_layer, n_heads, dropout)
 
 # Setup training components

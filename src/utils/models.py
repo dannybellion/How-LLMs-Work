@@ -105,11 +105,11 @@ class BigramLanguageModel(nn.Module):
     
 # Original Simple Model    
 class SimpleBigramLanguageModel(nn.Module):
-    def __init__(self, vocab_size, n_embed, block_size):
+    def __init__(self, vocab_size, block_size):
         super().__init__()
         self.block_size = block_size
-        self.token_embedding_table = nn.Embedding(vocab_size, n_embed)
-        self.position_embedding_table = nn.Embedding(block_size, n_embed)
+        self.token_embedding_table = nn.Embedding(vocab_size, vocab_size)
+        self.position_embedding_table = nn.Embedding(block_size, vocab_size)
 
     def forward(self, idx, targets=None):
         # idx and targets are both (B,T) tensor of integers

@@ -1,5 +1,3 @@
-from tqdm import tqdm
-
 class Trainer:
     def __init__(self, model, optimizer, train_loader, evaluator, max_iters, eval_interval=100):
         self.model = model
@@ -10,8 +8,7 @@ class Trainer:
         self.eval_interval = eval_interval
 
     def train(self):
-        pbar = tqdm(range(self.max_iters), desc="Training")
-        for i in pbar:
+        for i in range(self.max_iters):
             # Training step
             xb, yb = self.train_loader()
             logits, loss = self.model(xb, yb)
@@ -21,10 +18,11 @@ class Trainer:
             
             # Evaluation step
             if i % self.eval_interval == 0:
-                losses = self.evaluator.estimate_loss(eval_iters=200)
-                pbar.set_postfix({
-                    'train_loss': f"{losses['train']:.4f}",
-                    'val_loss': f"{losses['val']:.4f}"
-                })
+                metrics = self.evaluator.estimate_loss(eval_iters=self.eval_interval)
+                print(f"step {i}: "
+                      #f"train loss {metrics['train_loss']:.4f} "
+                      f"perplexity: {metrics['train_perplexity']:.1f}, "
+                      #f"val loss {metrics['val_loss']:.4f} "
+                      )
         
-        return losses
+        return metrics
