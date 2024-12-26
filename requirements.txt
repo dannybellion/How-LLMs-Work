@@ -1,3 +1,6 @@
 torch
 numpy
 pandas
+paramiko 
+wandb
+python-dotenv
